@@ -33,6 +33,6 @@ const thoughtSchema = new Schema(
     return this.reactions.length;
   });
   
-  const User = model('thought', thoughtSchema);
+  const Thought = model('thought', thoughtSchema);
   
   module.exports = Thought;
