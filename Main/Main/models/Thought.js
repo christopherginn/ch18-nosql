@@ -1,5 +1,6 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, trusted } = require('mongoose');
 const reactionSchema = require('./Reaction');
+const { format_date } = require('../utils/helpers');
 
 const thoughtSchema = new Schema(
     {
@@ -12,7 +13,7 @@ const thoughtSchema = new Schema(
       createdAt: {
         type: Date,
         default: Date.now,
-        // needs getter to format time stamp
+        get: (x) => format_date(x),
       },
       username: {
         type: String,
@@ -21,6 +22,7 @@ const thoughtSchema = new Schema(
       reactions: [reactionSchema],
     },
     {
+    timestamps: true,
       toJSON: {
         getters: true,
         virtuals: true,

@@ -74,34 +74,35 @@ module.exports = {
    
   },
 
-  // Add a friend to user friends array
-  addFriend(req, res) {
-    User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $addToSet: { friends: req.params.friendId } },
+  // Add a reaction to specific thought's reaction array
+  addReaction(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: {reactionBody: req.body.reactionBody, username: req.body.username } } },
       { runValidators: true, new: true }
     )
-      .then((user) =>
-        !user
+      .then((reaction) =>
+        !reaction
           ? res
               .status(404)
-              .json({ message: 'No user found with that ID :(' })
-          : res.json(user)
+              .json({ message: 'No thought found with that ID :(' })
+          : res.json(reaction)
       )
       .catch((err) => res.status(500).json(err));
   },
-  // Remove friend from the user friend array
-  removeFriend(req, res) {
-    User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $pull: { friends: req.params.friendId } },
+
+  // remove a reaction from a thought
+  removeReaction(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: { reactionId: req.body.reactionId }} },
       { new: true }
     )
       .then((user) =>
         !user
           ? res
               .status(404)
-              .json({ message: 'No user found with that ID :(' })
+              .json({ message: 'No thought found with that ID :(' })
           : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
