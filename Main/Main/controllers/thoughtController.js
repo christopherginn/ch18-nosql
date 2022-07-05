@@ -39,35 +39,39 @@ module.exports = {
             { $addToSet: { thoughts: thought._id } },
             { new: true }))
       .then((thought) => res.json(thought))
-      .catch((err) => res.status(500).send(err));
-
-    // console.log(thought);
-    
+      .catch((err) => res.status(500).send(err));   
   },
-  // Delete a user
+
+  // Delete a thought
   deleteThought(req, res) {
-    User.findOneAndRemove({ _id: req.params.userId })
-        .then(res.json({message:'User deleted'}))
+    Thought.findOneAndRemove({ _id: req.params.thoughtId })
+        .then((thought) => User.findOneAndUpdate(
+            { username: thought.username }, 
+            { $pull: { thoughts: req.params.thoughtId }},
+            { new: true }))
+        .then(res.json({message:'Thought deleted'}))
         .catch((err) => {
         console.log(err);
         res.status(500).json(err);
       });
-    
+      
   },
 
+  // update thoughtText of a thought by id
   updateThought(req, res) {
-    User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { username: req.body.username },
+    Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { thoughtText: req.body.thoughtText },
         { new: true},
         (err, result) => {
             if (result) {
                 res.status(200).json(result);
             } else {
-                res.status(500).json({message: "Username or email is not correct."})
+                res.status(500).json({message: "..."})
             }
         }
     )
+   
   },
 
   // Add a friend to user friends array
