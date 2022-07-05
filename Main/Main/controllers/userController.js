@@ -89,37 +89,70 @@ module.exports = {
     
   },
 
+  updateUser(req, res) {
+    User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { username: req.body.username },
+        { new: true},
+        (err, result) => {
+            if (result) {
+                res.status(200).json(result);
+            } else {
+                res.status(500).json({message: "Username or email is not correct."})
+            }
+        }
+    )
+  },
+
+//   app.put('/find-one-update/:genre', (req, res) => {
+//     // TODO: Write a route that will find the first instance of a document that contains a name with the value equal to 'Kids'
+//     // Update that name with the value given from the URL param
+//     // Return the updated document
+//     Genre.findOneAndUpdate(
+//       { name: "Kids" }, // filters to findOne
+//       { name: req.params.genre}, // the key and value to update in the find document
+//       { new: true }, // returns the updated document
+//       (err, result) => {
+//         if (result) {
+//           res.status(200).json(result);
+//           console.log(`${req.params.genre} has been updated.`);
+//         } else {
+//           console.log('Uh oh');
+//           res.status(500).json({message: "Uhoh"});
+//         }
+//       }
+//     )
+//   });
+
   // Add an assignment to a student
-  addAssignment(req, res) {
-    console.log('You are adding an assignment');
-    console.log(req.body);
-    Student.findOneAndUpdate(
-      { _id: req.params.studentId },
-      { $addToSet: { assignments: req.body } },
+  addFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )
-      .then((student) =>
-        !student
+      .then((user) =>
+        !user
           ? res
               .status(404)
-              .json({ message: 'No student found with that ID :(' })
-          : res.json(student)
+              .json({ message: 'No user found with that ID :(' })
+          : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
   // Remove assignment from a student
-  removeAssignment(req, res) {
-    Student.findOneAndUpdate(
-      { _id: req.params.studentId },
-      { $pull: { assignment: { assignmentId: req.params.assignmentId } } },
-      { runValidators: true, new: true }
+  removeFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendId } },
+      { new: true }
     )
-      .then((student) =>
-        !student
+      .then((user) =>
+        !user
           ? res
               .status(404)
-              .json({ message: 'No student found with that ID :(' })
-          : res.json(student)
+              .json({ message: 'No user found with that ID :(' })
+          : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
